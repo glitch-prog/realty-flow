@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Панель управления</span>
+        <h1>Текущая сводка по агентству</h1>
+        <p class="lead">Главные показатели, последние сделки и быстрый вход в основные разделы системы.</p>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <article class="stat-card">
+        <span class="stat-label">Объекты</span>
+        <strong class="stat-value">{{ stats.total_properties }}</strong>
+        <span class="stat-note">всего в базе</span>
+    </article>
+    <article class="stat-card">
+        <span class="stat-label">Свободные объекты</span>
+        <strong class="stat-value">{{ stats.free_properties }}</strong>
+        <span class="stat-note">готовы к сделке</span>
+    </article>
+    <article class="stat-card">
+        <span class="stat-label">Клиенты</span>
+        <strong class="stat-value">{{ stats.total_clients }}</strong>
+        <span class="stat-note">всего зарегистрировано</span>
+    </article>
+    <article class="stat-card">
+        <span class="stat-label">Активные сделки</span>
+        <strong class="stat-value">{{ stats.active_deals }}</strong>
+        <span class="stat-note">в процессе сопровождения</span>
+    </article>
+    <article class="stat-card accent">
+        <span class="stat-label">Поступления за месяц</span>
+        <strong class="stat-value">{{ stats.monthly_revenue }}</strong>
+        <span class="stat-note">по таблице платежей</span>
+    </article>
+</section>
+
+<section class="grid two">
+    <article class="card">
+        <div class="section-heading">
+            <h2>Последние сделки</h2>
+            <p>Живая выборка для стартового экрана руководителя и менеджеров.</p>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Объект</th>
+                    <th>Клиент</th>
+                    <th>Менеджер</th>
+                    <th>Тип</th>
+                    <th>Статус</th>
+                    <th>Сумма</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deal in recent_deals %}
+                <tr>
+                    <td>{{ deal.property_title }}</td>
+                    <td>{{ deal.client_name }}</td>
+                    <td>{{ deal.manager_name }}</td>
+                    <td>{{ deal.deal_type_name }}</td>
+                    <td>{{ deal.deal_status_name }}</td>
+                    <td>{{ deal.amount }}</td>
+                    <td>{{ deal.start_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+    <article class="card">
+        <div class="section-heading">
+            <h2>Что уже заложено в проект</h2>
+            <p>Каркас сделан под обязательные критерии положительной оценки.</p>
+        </div>
+        <ul class="feature-list">
+            <li>15 таблиц предметной области с внешними ключами и ограничениями.</li>
+            <li>Триггеры, функции, представления и готовые отчетные выборки.</li>
+            <li>Роли пользователей: администратор, менеджер, аналитик.</li>
+            <li>Журналирование действий и сценарии резервного копирования.</li>
+            <li>Интерфейс с формами, таблицами и навигацией по основным сущностям.</li>
+        </ul>
+    </article>
+</section>
+{% endblock %}

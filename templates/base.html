@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title }} | RealtyFlow</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="shell">
+        <header class="topbar">
+            <div>
+                <a class="brand" href="/app">RealtyFlow</a>
+                <p class="tagline">Автоматизация работы агентства недвижимости</p>
+            </div>
+            {% if is_authenticated %}
+            <div class="user-panel">
+                <div class="user-meta">
+                    <span class="user-name">{{ user_name }}</span>
+                    <span class="user-role">{{ role_name }}</span>
+                </div>
+                <form method="post" action="/logout">
+                    <button class="ghost-button" type="submit">Выйти</button>
+                </form>
+            </div>
+            {% endif %}
+        </header>
+
+        {% if is_authenticated %}
+        <nav class="nav">
+            <a class="nav-link {% if nav_active == "dashboard" %}active{% endif %}" href="/app">Обзор</a>
+            <a class="nav-link {% if nav_active == "properties" %}active{% endif %}" href="/app/properties">Объекты</a>
+            <a class="nav-link {% if nav_active == "owners" %}active{% endif %}" href="/app/owners">Собственники</a>
+            <a class="nav-link {% if nav_active == "clients" %}active{% endif %}" href="/app/clients">Клиенты</a>
+            <a class="nav-link {% if nav_active == "deals" %}active{% endif %}" href="/app/deals">Сделки</a>
+            <a class="nav-link {% if nav_active == "reports" %}active{% endif %}" href="/app/reports">Отчеты</a>
+            {% if is_admin %}
+            <a class="nav-link {% if nav_active == "audit" %}active{% endif %}" href="/app/audit">Журнал</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>
+

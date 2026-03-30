@@ -1,0 +1,50 @@
+﻿{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "setup-local",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/setup-local.ps1",
+      "problemMatcher": []
+    },
+    {
+      "label": "init-db",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File scripts/init_db.ps1",
+      "problemMatcher": []
+    },
+    {
+      "label": "cargo-run",
+      "type": "shell",
+      "command": "cargo run",
+      "group": "build",
+      "problemMatcher": [
+        "$rustc"
+      ]
+    },
+    {
+      "label": "db-schema",
+      "type": "shell",
+      "command": "psql -U postgres -d realty_agency -f sql/01_schema.sql",
+      "problemMatcher": []
+    },
+    {
+      "label": "db-seed",
+      "type": "shell",
+      "command": "psql -U postgres -d realty_agency -f sql/02_seed.sql",
+      "problemMatcher": []
+    },
+    {
+      "label": "db-automation",
+      "type": "shell",
+      "command": "psql -U postgres -d realty_agency -f sql/03_views_and_automation.sql",
+      "problemMatcher": []
+    },
+    {
+      "label": "db-roles",
+      "type": "shell",
+      "command": "psql -U postgres -d realty_agency -f sql/04_roles.sql",
+      "problemMatcher": []
+    }
+  ]
+}

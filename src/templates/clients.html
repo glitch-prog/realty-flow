@@ -1,0 +1,131 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Клиентская база</span>
+        <h1>Покупатели и арендаторы</h1>
+        <p class="lead">Учет клиентов с возможностью сопровождения карточек на всём жизненном цикле.</p>
+    </div>
+</section>
+
+<section class="grid two">
+    {% if can_edit %}
+    <form class="card form-card" method="post" action="/app/clients">
+        <div class="section-heading">
+            <h2>Новый клиент</h2>
+            <p>Карточка клиента для поиска подходящих объектов и ведения сделок.</p>
+        </div>
+
+        <label>
+            <span>Тип клиента</span>
+            <select name="client_type_id">
+                {% for item in client_types %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>ФИО</span>
+            <input type="text" name="full_name" required>
+        </label>
+
+        <label>
+            <span>Телефон</span>
+            <input type="text" name="phone" required>
+        </label>
+
+        <label>
+            <span>Email</span>
+            <input type="email" name="email">
+        </label>
+
+        <label>
+            <span>Бюджет</span>
+            <input type="number" step="0.01" min="0" name="budget">
+        </label>
+
+        <label>
+            <span>Предпочитаемая категория</span>
+            <select name="preferred_category_id">
+                <option value="">Не выбрана</option>
+                {% for item in categories %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Примечание</span>
+            <textarea name="notes" rows="4"></textarea>
+        </label>
+
+        <button class="primary-button" type="submit">Добавить клиента</button>
+    </form>
+    {% else %}
+    <section class="card">
+        <div class="section-heading">
+            <h2>Режим просмотра</h2>
+            <p>Для вашей роли доступен просмотр клиентской базы без изменения карточек.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="card">
+        <div class="section-heading">
+            <h2>Что учитывает раздел</h2>
+            <p>Набор полей подобран под задачи агентства недвижимости.</p>
+        </div>
+        <ul class="feature-list">
+            <li>Классификация клиентов как покупателей и арендаторов.</li>
+            <li>Фиксация бюджета для последующей фильтрации предложений.</li>
+            <li>Привязка предпочтительной категории недвижимости.</li>
+        </ul>
+    </section>
+</section>
+
+<section class="card">
+    <div class="section-heading">
+        <h2>Список клиентов</h2>
+        <p>Основа для отчетов по клиентской базе и сопровождению сделок.</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ФИО</th>
+                <th>Тип</th>
+                <th>Телефон</th>
+                <th>Email</th>
+                <th>Бюджет</th>
+                <th>Предпочтение</th>
+                <th>Примечание</th>
+                <th>Дата создания</th>
+                {% if can_edit %}<th>Действия</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.full_name }}</td>
+                <td>{{ client.client_type_name }}</td>
+                <td>{{ client.phone }}</td>
+                <td>{{ client.email }}</td>
+                <td>{{ client.budget_text }}</td>
+                <td>{{ client.preferred_category_name }}</td>
+                <td>{{ client.notes }}</td>
+                <td>{{ client.created_at }}</td>
+                {% if can_edit %}
+                <td>
+                    <a class="ghost-button" href="/app/clients/{{ client.id }}/edit">Изменить</a>
+                    <form method="post" action="/app/clients/{{ client.id }}/delete">
+                        <button class="ghost-button" type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

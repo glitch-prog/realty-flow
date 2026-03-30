@@ -1,0 +1,48 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Редактирование</span>
+        <h1>Собственник</h1>
+        <p class="lead">Изменение контактных и идентификационных данных владельца.</p>
+    </div>
+</section>
+
+<form class="card form-card" method="post" action="/app/owners/{{ owner.id }}/update">
+    <div class="section-heading">
+        <h2>Карточка собственника</h2>
+        <p>Изменения будут учтены во всех связанных разделах.</p>
+    </div>
+
+    <label>
+        <span>ФИО</span>
+        <input type="text" name="full_name" value="{{ owner.full_name }}" required>
+    </label>
+
+    <label>
+        <span>Телефон</span>
+        <input type="text" name="phone" value="{{ owner.phone }}" required>
+    </label>
+
+    <label>
+        <span>Email</span>
+        <input type="email" name="email" value="{{ owner.email }}">
+    </label>
+
+    <label>
+        <span>Паспорт</span>
+        <input type="text" name="passport_no" value="{{ owner.passport_no }}">
+    </label>
+
+    <label>
+        <span>Примечание</span>
+        <textarea name="notes" rows="5">{{ owner.notes }}</textarea>
+    </label>
+
+    <div class="section-heading">
+        <a class="ghost-button" href="/app/owners">Назад к списку</a>
+        <button class="primary-button" type="submit">Сохранить изменения</button>
+    </div>
+</form>
+{% endblock %}

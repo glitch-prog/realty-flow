@@ -1,0 +1,214 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Подсистема отчетов</span>
+        <h1>Аналитика по объектам, собственникам и сделкам</h1>
+        <p class="lead">Отчеты можно просматривать, печатать и экспортировать в CSV и Excel-совместимый формат.</p>
+    </div>
+    <div>
+        <button class="primary-button" type="button" onclick="window.print()">Печать</button>
+    </div>
+</section>
+
+<section class="grid two">
+    <article class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Каталог объектов</h2>
+                <p>Выборка по объединенному представлению `vw_property_catalog`.</p>
+            </div>
+            <div>
+                <a class="ghost-button" href="/app/reports/export/catalog/csv">CSV</a>
+                <a class="ghost-button" href="/app/reports/export/catalog/xls">Excel</a>
+            </div>
+        </div>
+        <table class="table compact">
+            <thead>
+                <tr>
+                    <th>Объект</th>
+                    <th>Категория</th>
+                    <th>Статус</th>
+                    <th>Район</th>
+                    <th>Собственник</th>
+                    <th>Цена</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in catalog %}
+                <tr>
+                    <td>{{ row.property_title }}</td>
+                    <td>{{ row.category_name }}</td>
+                    <td>{{ row.status_name }}</td>
+                    <td>{{ row.district_name }}</td>
+                    <td>{{ row.owner_name }}</td>
+                    <td>{{ row.price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+    <article class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Портфель собственников</h2>
+                <p>Сводка по количеству объектов и их общей стоимости.</p>
+            </div>
+            <div>
+                <a class="ghost-button" href="/app/reports/export/owner-portfolio/csv">CSV</a>
+                <a class="ghost-button" href="/app/reports/export/owner-portfolio/xls">Excel</a>
+            </div>
+        </div>
+        <table class="table compact">
+            <thead>
+                <tr>
+                    <th>Собственник</th>
+                    <th>Объекты</th>
+                    <th>Активные сделки</th>
+                    <th>Стоимость портфеля</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in owner_portfolio %}
+                <tr>
+                    <td>{{ row.owner_name }}</td>
+                    <td>{{ row.properties_count }}</td>
+                    <td>{{ row.active_deals }}</td>
+                    <td>{{ row.total_portfolio_value }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+
+<section class="grid two">
+    <article class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Продажи по месяцам</h2>
+                <p>Агрегатный отчет с группировкой по периодам.</p>
+            </div>
+            <div>
+                <a class="ghost-button" href="/app/reports/export/monthly-sales/csv">CSV</a>
+                <a class="ghost-button" href="/app/reports/export/monthly-sales/xls">Excel</a>
+            </div>
+        </div>
+        <table class="table compact">
+            <thead>
+                <tr>
+                    <th>Период</th>
+                    <th>Сделки</th>
+                    <th>Сумма</th>
+                    <th>Комиссия</th>
+                    <th>Платежи</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in monthly_sales %}
+                <tr>
+                    <td>{{ row.period_label }}</td>
+                    <td>{{ row.completed_deals }}</td>
+                    <td>{{ row.total_amount }}</td>
+                    <td>{{ row.total_commission }}</td>
+                    <td>{{ row.payments_received }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+    <article class="card">
+        <div class="section-heading">
+            <div>
+                <h2>Эффективность менеджеров</h2>
+                <p>Пример управленческого отчета по пользователям системы.</p>
+            </div>
+            <div>
+                <a class="ghost-button" href="/app/reports/export/manager-performance/csv">CSV</a>
+                <a class="ghost-button" href="/app/reports/export/manager-performance/xls">Excel</a>
+            </div>
+        </div>
+        <table class="table compact">
+            <thead>
+                <tr>
+                    <th>Менеджер</th>
+                    <th>Завершенные сделки</th>
+                    <th>Объем</th>
+                    <th>Комиссия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in manager_performance %}
+                <tr>
+                    <td>{{ row.manager_name }}</td>
+                    <td>{{ row.completed_deals }}</td>
+                    <td>{{ row.total_amount }}</td>
+                    <td>{{ row.total_commission }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+
+{% if is_admin %}
+<section class="card form-card">
+    <div class="section-heading">
+        <h2>Произвольный SQL-запрос</h2>
+        <p>Режим администратора для выполнения собственных SELECT/WITH/VALUES-запросов.</p>
+    </div>
+
+    <form method="post" action="/app/reports/sql">
+        <label>
+            <span>SQL</span>
+            <textarea name="sql" rows="8" required>{{ sql_query }}</textarea>
+        </label>
+        <button class="primary-button" type="submit">Выполнить запрос</button>
+    </form>
+
+    {% if has_sql_error %}
+    <p class="lead">{{ sql_error }}</p>
+    {% endif %}
+
+    {% if has_sql_result %}
+    <div class="section-heading">
+        <div>
+            <h2>Результат запроса</h2>
+            <p>Результат можно сразу экспортировать.</p>
+        </div>
+        <div>
+            <form method="post" action="/app/reports/sql/export/csv">
+                <textarea name="sql" hidden>{{ sql_query }}</textarea>
+                <button class="ghost-button" type="submit">CSV</button>
+            </form>
+            <form method="post" action="/app/reports/sql/export/xls">
+                <textarea name="sql" hidden>{{ sql_query }}</textarea>
+                <button class="ghost-button" type="submit">Excel</button>
+            </form>
+        </div>
+    </div>
+    <table class="table compact">
+        <thead>
+            <tr>
+                {% for header in sql_headers %}
+                <th>{{ header }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in sql_rows %}
+            <tr>
+                {% for cell in row %}
+                <td>{{ cell }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</section>
+{% endif %}
+{% endblock %}

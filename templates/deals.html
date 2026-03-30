@@ -1,0 +1,146 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Сделки</span>
+        <h1>Купля-продажа и аренда</h1>
+        <p class="lead">Регистрация сделок с автоматическим расчетом комиссии и сменой статусов на стороне БД.</p>
+    </div>
+</section>
+
+<section class="grid two">
+    {% if can_edit %}
+    <form class="card form-card" method="post" action="/app/deals">
+        <div class="section-heading">
+            <h2>Новая сделка</h2>
+            <p>Комиссия рассчитывается автоматически в СУБД при создании или обновлении записи.</p>
+        </div>
+
+        <label>
+            <span>Объект</span>
+            <select name="property_id">
+                {% for item in properties %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Клиент</span>
+            <select name="client_id">
+                {% for item in clients %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Тип сделки</span>
+            <select name="deal_type_id">
+                {% for item in deal_types %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Статус сделки</span>
+            <select name="status_id">
+                {% for item in deal_statuses %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <div class="split">
+            <label>
+                <span>Сумма</span>
+                <input type="number" step="0.01" min="0" name="amount" required>
+            </label>
+            <label>
+                <span>Дата начала</span>
+                <input type="date" name="start_date" required>
+            </label>
+        </div>
+
+        <label>
+            <span>Дата окончания</span>
+            <input type="date" name="end_date">
+        </label>
+
+        <label>
+            <span>Примечание</span>
+            <textarea name="notes" rows="4"></textarea>
+        </label>
+
+        <button class="primary-button" type="submit">Зарегистрировать сделку</button>
+    </form>
+    {% else %}
+    <section class="card">
+        <div class="section-heading">
+            <h2>Режим просмотра</h2>
+            <p>Для вашей роли доступен просмотр журнала сделок без изменения записей.</p>
+        </div>
+    </section>
+    {% endif %}
+
+    <section class="card">
+        <div class="section-heading">
+            <h2>Автоматизация БД</h2>
+            <p>Ключевая бизнес-логика вынесена в PostgreSQL.</p>
+        </div>
+        <ul class="feature-list">
+            <li>Проверка доступности объекта и запрет конфликтующих сделок.</li>
+            <li>Автоматическая смена статуса объекта после сделки.</li>
+            <li>Автоматический расчет комиссии агентства.</li>
+        </ul>
+    </section>
+</section>
+
+<section class="card">
+    <div class="section-heading">
+        <h2>Журнал сделок</h2>
+        <p>Список используется в отчетах по продажам и аренде.</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Объект</th>
+                <th>Клиент</th>
+                <th>Менеджер</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+                <th>Комиссия</th>
+                <th>Начало</th>
+                <th>Окончание</th>
+                {% if can_edit %}<th>Действия</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for deal in deals %}
+            <tr>
+                <td>{{ deal.property_title }}</td>
+                <td>{{ deal.client_name }}</td>
+                <td>{{ deal.manager_name }}</td>
+                <td>{{ deal.deal_type_name }}</td>
+                <td>{{ deal.deal_status_name }}</td>
+                <td>{{ deal.amount }}</td>
+                <td>{{ deal.commission }}</td>
+                <td>{{ deal.start_date }}</td>
+                <td>{{ deal.end_date }}</td>
+                {% if can_edit %}
+                <td>
+                    <a class="ghost-button" href="/app/deals/{{ deal.id }}/edit">Изменить</a>
+                    <form method="post" action="/app/deals/{{ deal.id }}/delete">
+                        <button class="ghost-button" type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

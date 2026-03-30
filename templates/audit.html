@@ -1,0 +1,44 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Журналирование</span>
+        <h1>Журнал действий пользователей</h1>
+        <p class="lead">Раздел доступен администратору и фиксирует изменения данных в системе.</p>
+    </div>
+    <div>
+        <a class="ghost-button" href="/app/reports/export/audit/csv">CSV</a>
+        <a class="ghost-button" href="/app/reports/export/audit/xls">Excel</a>
+    </div>
+</section>
+
+<section class="card">
+    <div class="section-heading">
+        <h2>Последние события</h2>
+        <p>Данные формируются из таблицы аудита и триггеров БД.</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Пользователь</th>
+                <th>Действие</th>
+                <th>Сущность</th>
+                <th>Детали</th>
+                <th>Дата и время</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in audit_rows %}
+            <tr>
+                <td>{{ row.actor_name }}</td>
+                <td>{{ row.action_type }}</td>
+                <td>{{ row.entity_name }}</td>
+                <td>{{ row.details }}</td>
+                <td>{{ row.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

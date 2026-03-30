@@ -1,0 +1,82 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="hero card">
+    <div>
+        <span class="eyebrow">Курсовой проект</span>
+        <h1>{{ app_name }}</h1>
+        <p class="lead">
+            Веб-приложение на Rust и PostgreSQL для учета объектов недвижимости, клиентов, собственников,
+            сделок купли-продажи и аренды, отчетности и аудита действий пользователей.
+        </p>
+    </div>
+</section>
+
+<section class="grid two">
+    <form class="card form-card" method="post" action="/login">
+        <div class="section-heading">
+            <h2>Вход в систему</h2>
+            <p>Используйте один из тестовых аккаунтов из seed-данных.</p>
+        </div>
+
+        {% if error_message != "" %}
+        <div class="alert">{{ error_message }}</div>
+        {% endif %}
+
+        <label>
+            <span>Логин</span>
+            <input type="text" name="username" placeholder="admin" required>
+        </label>
+
+        <label>
+            <span>Пароль</span>
+            <input type="password" name="password" placeholder="admin123" required>
+        </label>
+
+        <button class="primary-button" type="submit">Войти</button>
+    </form>
+
+    <section class="card">
+        <div class="section-heading">
+            <h2>Тестовые роли</h2>
+            <p>Основные роли соответствуют требованиям курсовой, а старые аккаунты сохранены для совместимости.</p>
+        </div>
+        <table class="table compact">
+            <thead>
+                <tr>
+                    <th>Роль</th>
+                    <th>Логин</th>
+                    <th>Пароль</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Администратор</td>
+                    <td>admin</td>
+                    <td>admin123</td>
+                </tr>
+                <tr>
+                    <td>Риелтор</td>
+                    <td>realtor</td>
+                    <td>realtor123</td>
+                </tr>
+                <tr>
+                    <td>Гость</td>
+                    <td>guest</td>
+                    <td>guest123</td>
+                </tr>
+                <tr>
+                    <td>Совместимость: менеджер</td>
+                    <td>manager</td>
+                    <td>manager123</td>
+                </tr>
+                <tr>
+                    <td>Совместимость: аналитик</td>
+                    <td>analyst</td>
+                    <td>analyst123</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</section>
+{% endblock %}

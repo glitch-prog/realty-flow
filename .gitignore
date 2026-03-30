@@ -1,0 +1,6 @@
+/target
+/.env
+/backups
+/.idea
+/.vscode/*.log
+

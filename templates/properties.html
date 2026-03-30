@@ -1,0 +1,194 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <span class="eyebrow">Каталог объектов</span>
+        <h1>Учет недвижимости</h1>
+        <p class="lead">Поиск, классификация, добавление и редактирование объектов недвижимости.</p>
+    </div>
+</section>
+
+<section class="grid two">
+    <form class="card form-card" method="get" action="/app/properties">
+        <div class="section-heading">
+            <h2>Поиск и фильтрация</h2>
+            <p>Фильтрация по ключевым атрибутам объекта согласно требованиям курсовой.</p>
+        </div>
+
+        <label>
+            <span>Поиск по названию или адресу</span>
+            <input type="text" name="q" value="{{ filter_q }}" placeholder="Например, Лесная 12">
+        </label>
+
+        <label>
+            <span>Категория</span>
+            <select name="category_id">
+                <option value="">Все</option>
+                {% for item in categories %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Статус</span>
+            <select name="status_id">
+                <option value="">Все</option>
+                {% for item in statuses %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Район</span>
+            <select name="district_id">
+                <option value="">Все</option>
+                {% for item in districts %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <button class="primary-button" type="submit">Применить фильтр</button>
+    </form>
+
+    {% if can_edit %}
+    <form class="card form-card" method="post" action="/app/properties">
+        <div class="section-heading">
+            <h2>Новый объект</h2>
+            <p>Форма добавления объекта в базу данных.</p>
+        </div>
+
+        <label>
+            <span>Название объекта</span>
+            <input type="text" name="title" placeholder="Квартира у метро" required>
+        </label>
+
+        <label>
+            <span>Собственник</span>
+            <select name="owner_id">
+                {% for owner in owners %}
+                <option value="{{ owner.id }}">{{ owner.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Категория</span>
+            <select name="category_id">
+                {% for item in categories %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Статус</span>
+            <select name="status_id">
+                {% for item in statuses %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Состояние</span>
+            <select name="condition_id">
+                {% for item in conditions %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Район</span>
+            <select name="district_id">
+                {% for item in districts %}
+                <option value="{{ item.id }}">{{ item.name }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <div class="split">
+            <label>
+                <span>Площадь</span>
+                <input type="number" step="0.01" min="1" name="area" required>
+            </label>
+            <label>
+                <span>Стоимость</span>
+                <input type="number" step="0.01" min="0" name="price" required>
+            </label>
+        </div>
+
+        <label>
+            <span>Адрес</span>
+            <input type="text" name="address" placeholder="г. Минск, ул. ..." required>
+        </label>
+
+        <label>
+            <span>Описание</span>
+            <textarea name="description" rows="4"></textarea>
+        </label>
+
+        <button class="primary-button" type="submit">Сохранить объект</button>
+    </form>
+    {% else %}
+    <section class="card">
+        <div class="section-heading">
+            <h2>Режим просмотра</h2>
+            <p>Для вашей роли доступен просмотр каталога и фильтрация без изменения данных.</p>
+        </div>
+    </section>
+    {% endif %}
+</section>
+
+<section class="card">
+    <div class="section-heading">
+        <h2>Список объектов</h2>
+        <p>Табличное представление и действия по редактированию/удалению.</p>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Категория</th>
+                <th>Статус</th>
+                <th>Состояние</th>
+                <th>Собственник</th>
+                <th>Район</th>
+                <th>Площадь</th>
+                <th>Стоимость</th>
+                <th>Адрес</th>
+                <th>Дата</th>
+                {% if can_edit %}<th>Действия</th>{% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for property in properties %}
+            <tr>
+                <td>{{ property.title }}</td>
+                <td>{{ property.category_name }}</td>
+                <td>{{ property.status_name }}</td>
+                <td>{{ property.condition_name }}</td>
+                <td>{{ property.owner_name }}</td>
+                <td>{{ property.district_name }}</td>
+                <td>{{ property.area }}</td>
+                <td>{{ property.price }}</td>
+                <td>{{ property.address }}</td>
+                <td>{{ property.listed_at }}</td>
+                {% if can_edit %}
+                <td>
+                    <a class="ghost-button" href="/app/properties/{{ property.id }}/edit">Изменить</a>
+                    <form method="post" action="/app/properties/{{ property.id }}/delete">
+                        <button class="ghost-button" type="submit">Удалить</button>
+                    </form>
+                </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
